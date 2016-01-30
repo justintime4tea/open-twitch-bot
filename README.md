@@ -27,3 +27,9 @@ module.exports = {
     OATH
 };
 ```
+
+## Running the bot
+Run 'node app.js' from within the project directory
+
+## Notes
+Still a work in progress and currently quite useless.
