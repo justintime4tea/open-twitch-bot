@@ -1,0 +1,16 @@
+{
+  "name": "twitch-project",
+  "version": "1.0.0",
+  "description": "Twitch Bot Project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "JustinTime4Tea",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "0.0.2",
+    "request": "^2.67.0",
+    "tmi.js": "0.0.24"
+  }
+}
