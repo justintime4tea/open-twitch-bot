@@ -1,11 +1,9 @@
 {
   "name": "twitch-project",
   "version": "1.0.0",
+  "private": true,
   "description": "Twitch Bot Project",
   "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "JustinTime4Tea",
   "license": "ISC",
   "dependencies": {
