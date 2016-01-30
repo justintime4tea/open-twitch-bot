@@ -4,7 +4,7 @@ A Twitch bot built using Node.js
 ## Setup
 Run 'npm install' within the project directory to install all required node modules
 
-Create a file in the root directory called personal.js using the content below but replacing channel, username and OATH with your information:
+Create a file in the root directory called personal.js using the content below but replacing channel, username and token with your information:
 
 ```
 'use strict';
