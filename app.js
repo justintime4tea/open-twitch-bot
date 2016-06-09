@@ -284,7 +284,7 @@ function DelayQueue(delayedFunc, delayedMs) {
   }
 
   function applyDelayedFunc(args) {
-    delayedFunc.apply(delayedFunc, args)
+    delayedFunc.apply(delayedFunc.prototype, args)
     updateLastCalled()
   }
 }
