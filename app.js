@@ -14,7 +14,9 @@ var clientSender,           // Used to send messages to Twitch channel
     lastMessageTime,        // The time of the last message sent by bot to channel, in milleseconds
     currentViewers,         // Array of viewers we have already welcomes
     newViewers,             // Array of viewers we have yet to welcome
-    quedMessages;           // Array of messages que'd to be sent to channel
+    quedMessages,           // Array of messages que'd to be sent to channel
+    coolDown = 3000;        // Cooldown ms, time to wait before processing any new sendToChat msgs
+                            // COLLDOWN WARNING, WILL NOT QUE, WILL DITCH MESSAGE, SEE TODO ^^
 
 init();
 
@@ -124,7 +126,7 @@ function updateTimeOfLastMessage(){
  */
 function botSpeak(channel, message) {
     // Check if it has been longer than 3 seconds (3000 ms) since the last time the bot has spoke
-    if ((Date.now() - lastMessageTime) >= 3000) {
+    if ((Date.now() - lastMessageTime) >= coolDown) {
         // Send the message provided to the channel provided
         clientListener.say(channel,message);
         updateTimeOfLastMessage();
