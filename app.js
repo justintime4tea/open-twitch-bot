@@ -127,22 +127,25 @@ function updateTimeOfLastMessage(){
  */
 function botSpeak(channel, message) {
     clearTimeout(queTimer);
-    // Check if it has been longer than 3 seconds (3000 ms) since the last time the bot has spoke
-    if ((Date.now() - lastMessageTime) >= coolDown ) {
-        // Send the message provided to the channel provided
-        // clientListener.say(channel,message);
-        console.log(channel, message);
-        updateTimeOfLastMessage();
-    } else {
-        //TODO: Add message to our que of unsent messages
-         messageQue.push(message);
-    }
-
-    queTimer = setTimeout(function() {
-        if(messageQue.length > 0) {
-            botSpeak(channel, messageQue.pop());
+    
+    if(messageQue.length < 6) {
+        // Check if it has been longer than 3 seconds (3000 ms) since the last time the bot has spoke
+        if ((Date.now() - lastMessageTime) >= coolDown ) {
+            // Send the message provided to the channel provided
+            clientListener.say(channel,message);
+            // console.log(channel, message);
+            updateTimeOfLastMessage();
+        } else {
+            //TODO: Add message to our que of unsent messages
+             messageQue.push(message);
         }
-    }, queTime);
+
+        queTimer = setTimeout(function() {
+            if(messageQue.length > 0) {
+                botSpeak(channel, messageQue.pop());
+            }
+        }, queTime);
+    }
 }
 
 /**
