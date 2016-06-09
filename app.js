@@ -173,14 +173,14 @@ function onAction(channel, user, message, self) {
 /**
  * Handles Twitch chat events
  * @param  {string} channel The channel the chat is coming from
- * @param  {string} user    The user that is emitting the chat message
+ * @param  {Object} user    The user that is emitting the chat message
  * @param  {string} message The message being emitted by user
  * @param  {boolean} self   Whether or not the chat is coming from the client application
  */
 function onChat(channel, user, message, self) {
     // console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
-    if(user !== personal.USERNAME){
-        botSpeak(channel, user + " Are you a brony? ...BRONNIES... MOUNT UP!");
+    if(user["username"] !== personal.USERNAME){
+        botSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
     }
 }
 
