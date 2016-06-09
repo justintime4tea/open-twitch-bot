@@ -8,17 +8,15 @@ var irc = require("tmi.js");
 var personal = require("./personal.js");
 var audience = require("./audience.js");
 var tasks = require("./tasks.js");
+var DelayQueue = require("./DelayQueue.js")
 
-var clientSender,           // Used to send messages to Twitch channel
-    clientListener,         // Used to listen to messages from Twitch channel
-    lastMessageTime,        // The time of the last message sent by bot to channel, in milleseconds
-    currentViewers,         // Array of viewers we have already welcomes
-    newViewers,             // Array of viewers we have yet to welcome
-    quedMessages,           // Array of messages que'd to be sent to channel
-    coolDown = 3000,        // Cooldown ms, time to wait before processing any new sendToChat msgs
-    messageQue = [],
-    queTime = 6000,
-    queTimer;
+var clientSender,          // Used to send messages to Twitch channel
+    clientListener,        // Used to listen to messages from Twitch channel
+    lastMessageTime,       // The time of the last message sent by bot to channel, in milleseconds
+    currentViewers,        // Array of viewers we have already welcomes
+    newViewers,            // Array of viewers we have yet to welcome
+    coolDown = 3000,       // Cooldown ms, time to wait before processing any new sendToChat msgs
+    botSpeak;              // Sends delayed queued messages to channel
 
 init();
 
@@ -33,7 +31,7 @@ function init() {
     currentViewers = [];
 
     // Connect the client to the server
-    setupConnection(personal.CHANNEL(), personal.USERNAME(), personal.OATH());
+    setupConnection(personal.CHANNEL(), personal.USERNAME(), personal.OATH()); // should be OAUTH
 }
 
 
@@ -80,6 +78,8 @@ function setupConnection(initialChannel, username, password) {
         // clientSender.connect();
         clientListener.connect();
 
+        botSpeak = DelayQueue(clientListener.say.bind(clientListener), coolDown)
+
         // See function description
         setupIncommingEventHandlers(clientListener);
     }
@@ -121,34 +121,6 @@ function updateTimeOfLastMessage(){
 }
 
 /**
- * Wrapper function to ensure bot does not spam chat with messages
- * @param  {string} channel The channel to send a message to
- * @param  {string} message The message to send to channel
- */
-function botSpeak(channel, message) {
-    clearTimeout(queTimer);
-    
-    if(messageQue.length < 6) {
-        // Check if it has been longer than 3 seconds (3000 ms) since the last time the bot has spoke
-        if ((Date.now() - lastMessageTime) >= coolDown ) {
-            // Send the message provided to the channel provided
-            clientListener.say(channel,message);
-            // console.log(channel, message);
-            updateTimeOfLastMessage();
-        } else {
-            //TODO: Add message to our que of unsent messages
-             messageQue.push(message);
-        }
-
-        queTimer = setTimeout(function() {
-            if(messageQue.length > 0) {
-                botSpeak(channel, messageQue.pop());
-            }
-        }, queTime);
-    }
-}
-
-/**
  * Welcome all the viewers who have yet to be welcomed to the chat
  */
 function welcomeViewers() {
@@ -183,9 +155,13 @@ function onAction(channel, user, message, self) {
 
 function onChat(channel, user, message, self) {
     // console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
-    if(user["username"] !== personal.USERNAME){
+    if(isNotBotChatting(user)){
         botSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
     }
+}
+
+function isNotBotChatting(user) {
+  return user["username"] !== personal.USERNAME().toLowerCase()
 }
 
 /**
