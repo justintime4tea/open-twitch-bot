@@ -18,7 +18,8 @@ var clientSender,           // Used to send messages to Twitch channel
     coolDown = 3000,        // Cooldown ms, time to wait before processing any new sendToChat msgs
     messageQue = [],
     queTime = 6000,
-    queTimer;
+    queTimer,
+    delayedBot;
 
 init();
 
@@ -74,13 +75,11 @@ function setupConnection(initialChannel, username, password) {
             channels: [initialChannel]
         };
 
-        // clientSender = new irc.client(options);
         clientListener = new irc.client(options);
 
-        // clientSender.connect();
         clientListener.connect();
 
-        const delayedBot = DelayQueue(clientListener.say, coolDown);
+        delayedBot = DelayQueue(clientListener.say, coolDown);
 
         // See function description
         setupIncommingEventHandlers(clientListener);
