@@ -15,16 +15,16 @@ var clientSender,           // Used to send messages to Twitch channel
     currentViewers,         // Array of viewers we have already welcomes
     newViewers,             // Array of viewers we have yet to welcome
     quedMessages,           // Array of messages que'd to be sent to channel
-    coolDown = 3000;        // Cooldown ms, time to wait before processing any new sendToChat msgs
-                            // COLLDOWN WARNING, WILL NOT QUE, WILL DITCH MESSAGE, SEE TODO ^^
+    coolDown = 3000,        // Cooldown ms, time to wait before processing any new sendToChat msgs
+    messageQue = [],
+    queTime = 6000,
+    queTimer;
 
 init();
 
 function init() {
 
-    tasks.init();
-
-    welcomeViewers();
+    // tasks.init();
     // TODO: Add check for crash to see if restarting or user initiated launch
 
     // Initialize variables
@@ -109,6 +109,7 @@ function setupIncommingEventHandlers(client) {
     // client.addListener("join", function(channel, user) {
     //     onJoin(channel, user);
     // });
+    welcomeViewers();
 
 }
 
@@ -125,14 +126,23 @@ function updateTimeOfLastMessage(){
  * @param  {string} message The message to send to channel
  */
 function botSpeak(channel, message) {
+    clearTimeout(queTimer);
     // Check if it has been longer than 3 seconds (3000 ms) since the last time the bot has spoke
     if ((Date.now() - lastMessageTime) >= coolDown) {
         // Send the message provided to the channel provided
         clientListener.say(channel,message);
+        // console.log(channel, message);
         updateTimeOfLastMessage();
     } else {
         //TODO: Add message to our que of unsent messages
+         messageQue.push(message);
     }
+
+    queTimer = setTimeout(function() {
+        if(messageQue.length > 0) {
+            botSpeak(channel, messageQue.pop());
+        }
+    }, queTime);
 }
 
 /**
@@ -142,7 +152,7 @@ function welcomeViewers() {
 
     if (newViewers !== undefined && newViewers.length > 0){
         for (let viewer of newViewers) {
-                console.log("Welcome: ", viewer);
+                botSpeak(personal.CHANNEL, "Welcome: " + viewer);
         }
     }
 
@@ -168,7 +178,8 @@ function onAction(channel, user, message, self) {
  * @param  {boolean} self   Whether or not the chat is coming from the client application
  */
 function onChat(channel, user, message, self) {
-    // console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
+    console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
+    botSpeak(channel, "'" + message + "'" + " is that what you really mean? Tell us how you really feel...");
 }
 
 /**
@@ -181,7 +192,7 @@ function onJoin(channel, username) {
     //TODO: Replace static defined username with the one listed in config.js
     if (username !== undefined && username !== "justintime4tea253") {
         // console.log("User:" + username + "has joined channel", channel);
-        // botSpeak("justintime4tea253", "Welcome " + username + " to the channel!");
+        botSpeak("justintime4tea253", "Welcome " + username + " to the channel!");
 
         // TODO: Check if user is already in list of currentViewers before adding to newViewers
 
@@ -202,7 +213,7 @@ function banUser(channel, user) {
 
 }
 
-function unbanUser(channel, user) {
+function unBanUser(channel, user) {
 
 }
 
