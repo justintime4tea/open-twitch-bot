@@ -18,8 +18,7 @@ var clientSender,           // Used to send messages to Twitch channel
     coolDown = 3000,        // Cooldown ms, time to wait before processing any new sendToChat msgs
     messageQue = [],
     queTime = 6000,
-    queTimer,
-    delayedBot;
+    queTimer;
 
 init();
 
@@ -75,11 +74,11 @@ function setupConnection(initialChannel, username, password) {
             channels: [initialChannel]
         };
 
+        // clientSender = new irc.client(options);
         clientListener = new irc.client(options);
 
+        // clientSender.connect();
         clientListener.connect();
-
-        delayedBot = DelayQueue(clientListener.say, coolDown);
 
         // See function description
         setupIncommingEventHandlers(clientListener);
@@ -103,7 +102,6 @@ function setupIncommingEventHandlers(client) {
      });
 
     client.addListener("chat", function(channel, user, message, self) {
-
         onChat(channel, user, message, self);
     });
 
@@ -132,7 +130,7 @@ function botSpeak(channel, message) {
     // Check if it has been longer than 3 seconds (3000 ms) since the last time the bot has spoke
     if ((Date.now() - lastMessageTime) >= coolDown ) {
         // Send the message provided to the channel provided
-        clientListener.say(channel,message);
+        // clientListener.say(channel,message);
         console.log(channel, message);
         updateTimeOfLastMessage();
     } else {
@@ -183,10 +181,8 @@ function onAction(channel, user, message, self) {
 function onChat(channel, user, message, self) {
     // console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
     if(user["username"] !== personal.USERNAME){
-        // botSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
-        delayedBot(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
+        botSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
     }
-
 }
 
 /**
@@ -231,61 +227,3 @@ function timeoutUser(channel, user, seconds) {
 function parseMessage(message, emotes) {
 
 }
-
-function DelayQueue(delayedFunc, delayedMs) {
-  let lastCalled = 0
-  let queueInterval = null
-  const queue = []
-  const shouldDelay = () => (Date.now() - lastCalled) <= delayedMs
-
-  return function() {
-    if (shouldDelay()) {
-      queueFunctionArgs(arguments)
-      startWatchingQueue()
-    } else {
-      applyDelayedFunc(arguments)
-      stopWatchingQueue()
-    }
-  }
-
-  function queueFunctionArgs(args) {
-    queue.push(Array.from(args))
-  }
-
-  function startWatchingQueue() {
-    if (isNotWatchingQueue()) {
-      queueInterval = setInterval(shiftQueue, delayedMs)
-    }
-  }
-
-  function isNotWatchingQueue() {
-    return queueInterval === null
-  }
-
-  function updateLastCalled() {
-    lastCalled = Date.now()
-  }
-
-  function stopWatchingQueue() {
-    clearInterval(queueInterval)
-    queueInterval = null
-  }
-
-  function shiftQueue() {
-    if (hasQueuedFunction()) {
-      applyDelayedFunc(queue.shift())
-    } else {
-      stopWatchingQueue()
-    }
-  }
-
-  function hasQueuedFunction() {
-    return queue.length > 0
-  }
-
-  function applyDelayedFunc(args) {
-    delayedFunc.apply(delayedFunc.prototype, args)
-    updateLastCalled()
-  }
-}
-
