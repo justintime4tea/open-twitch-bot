@@ -109,7 +109,7 @@ function setupIncommingEventHandlers(client) {
     // client.addListener("join", function(channel, user) {
     //     onJoin(channel, user);
     // });
-    welcomeViewers();
+    // welcomeViewers();
 
 }
 
@@ -128,7 +128,7 @@ function updateTimeOfLastMessage(){
 function botSpeak(channel, message) {
     clearTimeout(queTimer);
     // Check if it has been longer than 3 seconds (3000 ms) since the last time the bot has spoke
-    if ((Date.now() - lastMessageTime) >= coolDown) {
+    if ((Date.now() - lastMessageTime) >= coolDown ) {
         // Send the message provided to the channel provided
         clientListener.say(channel,message);
         // console.log(channel, message);
@@ -178,8 +178,10 @@ function onAction(channel, user, message, self) {
  * @param  {boolean} self   Whether or not the chat is coming from the client application
  */
 function onChat(channel, user, message, self) {
-    console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
-    botSpeak(channel, "'" + message + "'" + " is that what you really mean? Tell us how you really feel...");
+    // console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
+    if(user !== personal.USERNAME){
+        botSpeak(channel, user + "Are you a brony? ...BRONNIES... MOUNT UP!");
+    }
 }
 
 /**
@@ -192,7 +194,7 @@ function onJoin(channel, username) {
     //TODO: Replace static defined username with the one listed in config.js
     if (username !== undefined && username !== "justintime4tea253") {
         // console.log("User:" + username + "has joined channel", channel);
-        botSpeak("justintime4tea253", "Welcome " + username + " to the channel!");
+        // botSpeak("justintime4tea253", "Welcome " + username + " to the channel!");
 
         // TODO: Check if user is already in list of currentViewers before adding to newViewers
 
