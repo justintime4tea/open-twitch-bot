@@ -20,6 +20,8 @@ var clientSender,           // Used to send messages to Twitch channel
     queTime = 6000,
     queTimer;
 
+const delayedBot = DelayQueue(botSpeak, coolDown);
+
 init();
 
 function init() {
@@ -102,6 +104,7 @@ function setupIncommingEventHandlers(client) {
      });
 
     client.addListener("chat", function(channel, user, message, self) {
+
         onChat(channel, user, message, self);
     });
 
@@ -161,7 +164,7 @@ function welcomeViewers() {
 /**
  * Handles Twitch action events
  * @param  {string} channel The channel the action is coming from
- * @param  {string} user    The user that is emitting the action
+ * @param  {Object} user['username']    The user that is emitting the action
  * @param  {string} message The message being emitted by user
  * @param  {boolean} self   Whether or not the action is coming from the client application
  */
@@ -181,7 +184,8 @@ function onAction(channel, user, message, self) {
 function onChat(channel, user, message, self) {
     // console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
     if(user["username"] !== personal.USERNAME){
-        botSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
+        // botSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
+        delayedBot(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
     }
 }
 
@@ -227,3 +231,61 @@ function timeoutUser(channel, user, seconds) {
 function parseMessage(message, emotes) {
 
 }
+
+function DelayQueue(delayedFunc, delayedMs) {
+  let lastCalled = 0
+  let queueInterval = null
+  const queue = []
+  const shouldDelay = () => (Date.now() - lastCalled) <= delayedMs
+
+  return function() {
+    if (shouldDelay()) {
+      queueFunctionArgs(arguments)
+      startWatchingQueue()
+    } else {
+      applyDelayedFunc(arguments)
+      stopWatchingQueue()
+    }
+  }
+
+  function queueFunctionArgs(args) {
+    queue.push(Array.from(args))
+  }
+
+  function startWatchingQueue() {
+    if (isNotWatchingQueue()) {
+      queueInterval = setInterval(shiftQueue, delayedMs)
+    }
+  }
+
+  function isNotWatchingQueue() {
+    return queueInterval === null
+  }
+
+  function updateLastCalled() {
+    lastCalled = Date.now()
+  }
+
+  function stopWatchingQueue() {
+    clearInterval(queueInterval)
+    queueInterval = null
+  }
+
+  function shiftQueue() {
+    if (hasQueuedFunction()) {
+      applyDelayedFunc(queue.shift())
+    } else {
+      stopWatchingQueue()
+    }
+  }
+
+  function hasQueuedFunction() {
+    return queue.length > 0
+  }
+
+  function applyDelayedFunc(args) {
+    delayedFunc.apply(delayedFunc, args)
+    updateLastCalled()
+  }
+}
+
