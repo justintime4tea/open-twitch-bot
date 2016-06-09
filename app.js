@@ -20,10 +20,6 @@ var clientSender,           // Used to send messages to Twitch channel
     queTime = 6000,
     queTimer;
 
-var delayedFunc = clientListener.say(channel,message);
-
-const delayedBot = DelayQueue(delayedFunc, coolDown);
-
 init();
 
 function init() {
@@ -83,6 +79,8 @@ function setupConnection(initialChannel, username, password) {
 
         // clientSender.connect();
         clientListener.connect();
+
+        const delayedBot = DelayQueue(clientListener.say, coolDown);
 
         // See function description
         setupIncommingEventHandlers(clientListener);
@@ -189,6 +187,7 @@ function onChat(channel, user, message, self) {
         // botSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
         delayedBot(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
     }
+
 }
 
 /**
