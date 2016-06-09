@@ -130,8 +130,8 @@ function botSpeak(channel, message) {
     // Check if it has been longer than 3 seconds (3000 ms) since the last time the bot has spoke
     if ((Date.now() - lastMessageTime) >= coolDown ) {
         // Send the message provided to the channel provided
-        clientListener.say(channel,message);
-        // console.log(channel, message);
+        // clientListener.say(channel,message);
+        console.log(channel, message);
         updateTimeOfLastMessage();
     } else {
         //TODO: Add message to our que of unsent messages
@@ -180,7 +180,7 @@ function onAction(channel, user, message, self) {
 function onChat(channel, user, message, self) {
     // console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
     if(user !== personal.USERNAME){
-        botSpeak(channel, user + "Are you a brony? ...BRONNIES... MOUNT UP!");
+        botSpeak(channel, user + " Are you a brony? ...BRONNIES... MOUNT UP!");
     }
 }
 
