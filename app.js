@@ -20,7 +20,7 @@ var clientSender,           // Used to send messages to Twitch channel
     queTime = 6000,
     queTimer;
 
-const delayedBot = DelayQueue(botSpeak, coolDown);
+const delayedBot = DelayQueue(clientListener.say, coolDown);
 
 init();
 
@@ -133,7 +133,7 @@ function botSpeak(channel, message) {
     // Check if it has been longer than 3 seconds (3000 ms) since the last time the bot has spoke
     if ((Date.now() - lastMessageTime) >= coolDown ) {
         // Send the message provided to the channel provided
-        // clientListener.say(channel,message);
+        clientListener.say(channel,message);
         console.log(channel, message);
         updateTimeOfLastMessage();
     } else {
