@@ -20,7 +20,9 @@ var clientSender,           // Used to send messages to Twitch channel
     queTime = 6000,
     queTimer;
 
-const delayedBot = DelayQueue(clientListener.say, coolDown);
+var delayedFunc = clientListener.say(channel,message);
+
+const delayedBot = DelayQueue(delayedFunc, coolDown);
 
 init();
 
