@@ -29,7 +29,7 @@ function init() {
     lastMessageTime = 0;
     newViewers = [];
     currentViewers = [];
-    channelSpeakers = [];
+    channelSpeakers = {};
 
     // Connect the client to the server
     setupConnection(personal.CHANNELS(), personal.USERNAME(), personal.OAUTH());
@@ -80,7 +80,7 @@ function setupConnection(channels, username, password) {
         botSpeak = DelayQueue(clientListener.say.bind(clientListener), coolDown)
 
         for (let channel in channels) {
-                channelSpeakers.push({channel: channel, botSpeak: botSpeak})
+                channelSpeakers[channel] = botSpeak;
             }
         }
 
@@ -162,14 +162,8 @@ function onAction(channel, user, message, self) {
 function onChat(channel, user, message, self) {
     // console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
     if(isNotBot(user)){
-        for (let speaker in channelSpeakers) {
-                if(speaker['channel'] === channel) {
-                    newBotSpeak = speaker['botSpeak'];
-                    newBotSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
-                }
-            }
-        }
-
+        newBotSpeak = channelSpeakers[channel];
+        newBotSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
     }
 }
 
