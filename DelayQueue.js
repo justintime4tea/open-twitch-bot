@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = function DelayQueue(delayedFunc, delayedMs) {
   let lastCalled = 0
   let queueInterval = null
