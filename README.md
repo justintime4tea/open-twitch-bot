@@ -5,6 +5,7 @@ A Twitch bot built using Node.js
 Run 'npm install' within the project directory to install all required node modules
 
 Copy personal.js.example to personal.js and fill in the details using your Twitch information.
+Don't worry personal.js will not be committed, it is included in the .gitignore file.
 
 ## Running the bot
 Run 'node app.js' from within the project directory

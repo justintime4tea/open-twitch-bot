@@ -16,8 +16,8 @@ var clientSender,          // Used to send messages to Twitch channel
     currentViewers,        // Array of viewers we have already welcomes
     newViewers,            // Array of viewers we have yet to welcome
     coolDown = 3000,       // Cooldown ms, time to wait before processing any new sendToChat msgs
-    botSpeak;              // Sends delayed queued messages to channel
-
+    botSpeak,              // Sends delayed queued messages to channel
+    channelSpeakers;
 init();
 
 function init() {
@@ -29,6 +29,7 @@ function init() {
     lastMessageTime = 0;
     newViewers = [];
     currentViewers = [];
+    channelSpeakers = [];
 
     // Connect the client to the server
     setupConnection(personal.CHANNELS(), personal.USERNAME(), personal.OAUTH());
@@ -72,13 +73,16 @@ function setupConnection(channels, username, password) {
             channels: channels
         };
 
-        // clientSender = new irc.client(options);
         clientListener = new irc.client(options);
 
-        // clientSender.connect();
         clientListener.connect();
 
         botSpeak = DelayQueue(clientListener.say.bind(clientListener), coolDown)
+
+        for (let channel in channels) {
+                channelSpeakers.push({channel: channel, botSpeak: botSpeak})
+            }
+        }
 
         // See function description
         setupIncommingEventHandlers(clientListener);
@@ -121,35 +125,6 @@ function updateTimeOfLastMessage(){
 }
 
 /**
- * Wrapper function to ensure bot does not spam chat with messages
- *
- * @param  {string} channel The channel to send a message to
- * @param  {string} message The message to send to channel
- */
-function botSpeak(channel, message) {
-    clearTimeout(queTimer);
-
-    if(messageQue.length < 6) {
-        // Check if it has been longer than 3 seconds (3000 ms) since the last time the bot has spoke
-        if ((Date.now() - lastMessageTime) >= coolDown ) {
-            // Send the message provided to the channel provided
-            clientListener.say(channel,message);
-            // console.log(channel, message);
-            updateTimeOfLastMessage();
-        } else {
-            //TODO: Add message to our que of unsent messages
-             messageQue.push(message);
-        }
-
-        queTimer = setTimeout(function() {
-            if(messageQue.length > 0) {
-                botSpeak(channel, messageQue.pop());
-            }
-        }, queTime);
-    }
-}
-
-/**
  * Welcome all the viewers who have yet to be welcomed to the chat
  */
 function welcomeViewers() {
@@ -187,7 +162,14 @@ function onAction(channel, user, message, self) {
 function onChat(channel, user, message, self) {
     // console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
     if(isNotBot(user)){
-        botSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
+        for (let speaker in channelSpeakers) {
+                if(speaker['channel'] === channel) {
+                    newBotSpeak = speaker['botSpeak'];
+                    newBotSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
+                }
+            }
+        }
+
     }
 }
 
@@ -197,7 +179,7 @@ function isNotBot(user) {
 
 /**
  * Handle Twitch join events
- * 
+ *
  * @param  {string} channel  The channel that is being joined
  * @param  {string} username The username that is joining the channel
  */
