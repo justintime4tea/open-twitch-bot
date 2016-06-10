@@ -160,7 +160,7 @@ function onAction(channel, user, message, self) {
 function onChat(channel, user, message, self) {
     // console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
     if(isNotBot(user)){
-        botSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
+        botSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!")
     }
 }
 
@@ -183,7 +183,7 @@ function onJoin(channel, user) {
     var username = user['username'];
     console.log("Detected a join... no this is not SQL... HA... HA... HA... ", username);
     //TODO: Replace static defined username with the one listed in config.js
-    if (isNotBot(user) {
+    if (isNotBot(user)) {
         console.log("User:" + username + "has joined channel", channel);
         botSpeak(channel, "Welcome " + username + " to the channel!");
 
