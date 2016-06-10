@@ -33,7 +33,7 @@ function init() {
     currentViewers = [];
 
     // Connect the client to the server
-    setupConnection(personal.CHANNEL(), personal.USERNAME(), personal.OATH());
+    setupConnection(personal.CHANNELS(), personal.USERNAME(), personal.OAUTH());
 }
 
 
@@ -44,7 +44,7 @@ function init() {
  * @param  {string} username       The Twitch username to be used by the bot
  * @param  {string} password       The password for the username used by the bot
  */
-function setupConnection(initialChannel, username, password) {
+function setupConnection(channels, username, password) {
 
     // var callback = function(error, response, body){
     //         if (error) {
@@ -71,7 +71,7 @@ function setupConnection(initialChannel, username, password) {
                 username: username,
                 password: password
             },
-            channels: [initialChannel]
+            channels: channels
         };
 
         // clientSender = new irc.client(options);
