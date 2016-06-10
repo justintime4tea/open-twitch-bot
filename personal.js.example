@@ -1,0 +1,19 @@
+'use strict';
+
+function CHANNELS() {
+    return ["channel1", "channel2"];
+}
+
+function USERNAME() {
+    return "username";
+}
+
+function OAUTH() {
+    return "oauth:TOKEN";
+}
+
+module.exports = {
+    CHANNELS,
+    USERNAME,
+    OAUTH
+};
