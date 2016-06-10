@@ -182,11 +182,9 @@ function onAction(channel, user, message, self) {
  */
 
 function onChat(channel, user, message, self) {
-    console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
+    // console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
     if(isNotBot(user)){
-        // botSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
-        // console.log(user["username"]);
-        console.log(personal.USERNAME().toLowerCase());
+        botSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
     }
 }
 
