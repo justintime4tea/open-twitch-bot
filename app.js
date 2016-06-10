@@ -127,7 +127,7 @@ function updateTimeOfLastMessage(){
  */
 function botSpeak(channel, message) {
     clearTimeout(queTimer);
-    
+
     if(messageQue.length < 6) {
         // Check if it has been longer than 3 seconds (3000 ms) since the last time the bot has spoke
         if ((Date.now() - lastMessageTime) >= coolDown ) {
@@ -182,9 +182,11 @@ function onAction(channel, user, message, self) {
  */
 
 function onChat(channel, user, message, self) {
-    // console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
-    if(user["username"] !== personal.USERNAME){
-        botSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
+    console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
+    if(user["username"] !== personal.USERNAME().toLowerCase(){
+        // botSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
+        console.log(user["username"]);
+        console.log(personal.USERNAME().toLowerCase());
     }
 }
 
