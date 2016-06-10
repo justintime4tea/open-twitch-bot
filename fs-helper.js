@@ -5,6 +5,35 @@
 
 var fs = require('fs');
 
+function deleteFile(file){
+    fs.stat(file, function(err, stats){
+        if(err) {
+            console.log(err);
+        } else {
+            fs.unlink(file,function(err){
+                if(err) return console.log(err);
+                console.log('Deleted', file, 'successfully');
+            })
+        }
+    })
+}
+
+function deleteFiles(files){
+    files.forEach(function (file) {
+        fs.stat(file, function(err, stats){
+            if(err) {
+                console.log(err)
+            } else {
+                console.log(stats)
+                fs.unlink(file,function(err){
+                    if(err) return console.log(err)
+                    console.log('Deleted', file, 'successfully')
+                })
+            }
+        })
+    })
+}
+
 function writeToFile(file, data) {
     fs.writeFile(file, JSON.stringify(data) + '\n', function(err) {
         if (err) {
@@ -23,11 +52,13 @@ function readFile(file) {
             } else {
                 resolve(String(data));
             }
-        });
-    });
+        })
+    })
 }
 
 module.exports = {
     writeToFile,
-    readFile
+    readFile,
+    deleteFile,
+    deleteFiles
 };
