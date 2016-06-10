@@ -16,7 +16,7 @@ var clientSender,          // Used to send messages to Twitch channel
     currentViewers,        // Array of viewers we have already welcomes
     newViewers,            // Array of viewers we have yet to welcome
     coolDown = 3000,       // Cooldown ms, time to wait before processing any new sendToChat msgs
-    botSpeak,              // Sends delayed queued messages to channel
+    botSpeaker,              // Sends delayed queued messages to channel
     channelSpeakers;
 init();
 
@@ -73,18 +73,17 @@ function setupConnection(channels, username, password) {
             channels: channels
         };
 
-        clientListener = new irc.client(options);
+        clientListener = new irc.client(options)
 
-        clientListener.connect();
+        clientListener.connect()
 
-        botSpeak = DelayQueue(clientListener.say.bind(clientListener), coolDown);
+        botSpeaker = DelayQueue(clientListener.say.bind(clientListener), coolDown)
 
-        for (let channel in channels) {
-                channelSpeakers[channel] = botSpeak;
-            }
+        channels.forEach(function (elem) {
+            channelSpeakers[elem] = botSpeaker
+        })
 
-        // See function description
-        setupIncommingEventHandlers(clientListener);
+        setupIncommingEventHandlers(clientListener)
     }
 
 }
@@ -109,9 +108,9 @@ function setupIncommingEventHandlers(client) {
     });
 
     //NOTE: Handling joins and leaves using Twitch TMI REST endpoint
-    // client.addListener("join", function(channel, user) {
-    //     onJoin(channel, user);
-    // });
+    client.addListener("join", function(channel, user) {
+        onJoin(channel, user);
+    });
     // welcomeViewers();
 
 }
@@ -161,30 +160,34 @@ function onAction(channel, user, message, self) {
 function onChat(channel, user, message, self) {
     // console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
     if(isNotBot(user)){
-        newBotSpeak = channelSpeakers[channel];
-        newBotSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
+        botSpeak(channel, user["username"] + " Are you a brony? ...BRONNIES... MOUNT UP!");
     }
 }
 
 function isNotBot(user) {
-  return user["username"] !== personal.USERNAME().toLowerCase()
+  return user["username"] !== personal.USERNAME().toLowerCase() && user['username'] !== undefined
+}
+
+function botSpeak(channel, message){
+    var channelSpeak = channelSpeakers[channel]
+    channelSpeak(channel, message)
 }
 
 /**
  * Handle Twitch join events
  *
  * @param  {string} channel  The channel that is being joined
- * @param  {string} username The username that is joining the channel
+ * @param  {Object} user The username that is joining the channel
  */
-function onJoin(channel, username) {
+function onJoin(channel, user) {
+    var username = user['username'];
     console.log("Detected a join... no this is not SQL... HA... HA... HA... ", username);
     //TODO: Replace static defined username with the one listed in config.js
-    if (username !== undefined && username !== "justintime4tea253") {
-        // console.log("User:" + username + "has joined channel", channel);
-        // botSpeak("justintime4tea253", "Welcome " + username + " to the channel!");
+    if (isNotBot(user) {
+        console.log("User:" + username + "has joined channel", channel);
+        botSpeak(channel, "Welcome " + username + " to the channel!");
 
         // TODO: Check if user is already in list of currentViewers before adding to newViewers
-
         if (newViewers.length < 1) {
             console.log("First user to be added to newViewers:", username);
             newViewers = [username];
