@@ -77,12 +77,11 @@ function setupConnection(channels, username, password) {
 
         clientListener.connect();
 
-        botSpeak = DelayQueue(clientListener.say.bind(clientListener), coolDown)
+        botSpeak = DelayQueue(clientListener.say.bind(clientListener), coolDown);
 
         for (let channel in channels) {
                 channelSpeakers[channel] = botSpeak;
             }
-        }
 
         // See function description
         setupIncommingEventHandlers(clientListener);
