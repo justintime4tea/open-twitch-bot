@@ -8,17 +8,15 @@ var irc = require("tmi.js");
 var personal = require("./personal.js");
 var audience = require("./audience.js");
 var tasks = require("./tasks.js");
+var DelayQueue = require("./DelayQueue.js")
 
-var clientSender,           // Used to send messages to Twitch channel
-    clientListener,         // Used to listen to messages from Twitch channel
-    lastMessageTime,        // The time of the last message sent by bot to channel, in milleseconds
-    currentViewers,         // Array of viewers we have already welcomes
-    newViewers,             // Array of viewers we have yet to welcome
-    quedMessages,           // Array of messages que'd to be sent to channel
-    coolDown = 3000,        // Cooldown ms, time to wait before processing any new sendToChat msgs
-    messageQue = [],
-    queTime = 6000,
-    queTimer;
+var clientSender,          // Used to send messages to Twitch channel
+    clientListener,        // Used to listen to messages from Twitch channel
+    lastMessageTime,       // The time of the last message sent by bot to channel, in milleseconds
+    currentViewers,        // Array of viewers we have already welcomes
+    newViewers,            // Array of viewers we have yet to welcome
+    coolDown = 3000,       // Cooldown ms, time to wait before processing any new sendToChat msgs
+    botSpeak;              // Sends delayed queued messages to channel
 
 init();
 
@@ -80,6 +78,8 @@ function setupConnection(channels, username, password) {
         // clientSender.connect();
         clientListener.connect();
 
+        botSpeak = DelayQueue(clientListener.say.bind(clientListener), coolDown)
+
         // See function description
         setupIncommingEventHandlers(clientListener);
     }
@@ -122,6 +122,7 @@ function updateTimeOfLastMessage(){
 
 /**
  * Wrapper function to ensure bot does not spam chat with messages
+ *
  * @param  {string} channel The channel to send a message to
  * @param  {string} message The message to send to channel
  */
@@ -163,6 +164,7 @@ function welcomeViewers() {
 
 /**
  * Handles Twitch action events
+ *
  * @param  {string} channel The channel the action is coming from
  * @param  {Object} user['username']    The user that is emitting the action
  * @param  {string} message The message being emitted by user
@@ -175,6 +177,7 @@ function onAction(channel, user, message, self) {
 
 /**
  * Handles Twitch chat events
+ *
  * @param  {string} channel The channel the chat is coming from
  * @param  {Object} user    The user that is emitting the chat message
  * @param  {string} message The message being emitted by user
@@ -189,11 +192,12 @@ function onChat(channel, user, message, self) {
 }
 
 function isNotBot(user) {
-    return user["username"] !== personal.USERNAME().toLowerCase() ? true : false;
+  return user["username"] !== personal.USERNAME().toLowerCase()
 }
 
 /**
  * Handle Twitch join events
+ * 
  * @param  {string} channel  The channel that is being joined
  * @param  {string} username The username that is joining the channel
  */
