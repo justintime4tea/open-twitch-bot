@@ -7,6 +7,7 @@
   "author": "JustinTime4Tea",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^1.1.3",
     "fs": "0.0.2",
     "request": "^2.67.0",
     "tmi.js": "0.0.24",

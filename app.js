@@ -160,7 +160,7 @@ function onAction(channel, user, message, self) {
 function onChat(channel, user, message, self) {
     // console.log("Chat:", user["username"] !== undefined ? user["username"] : "SomeUser", "said:", message);
     if(isNotBot(user)){
-        botSpeak(channel, user["username"] + " no.. just no.")
+        // botSpeak(channel, user["username"] + " no.. just no.")
     }
 }
 

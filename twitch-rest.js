@@ -11,7 +11,7 @@ var request = require('request'),
     qs = {},
     method = "GET";
 
-function getChatters(channel) {
+function detectChatters(channel) {
     return new Promise(function(resolve, reject) {
         request({
             url: urlPrefix + channel + urlSuffix,
@@ -34,5 +34,5 @@ function getChatters(channel) {
 }
 
 module.exports = {
-    getChatters
+    detectChatters
 };
