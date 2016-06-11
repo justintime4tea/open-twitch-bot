@@ -3,33 +3,28 @@
 /* jslint node: true */
 /* jshint -W117, -W104 */
 
-// Do NOT include this line if you are using the built js version!
-var irc = require("tmi.js");
-var personal = require("./personal.js");
-var audience = require("./audience.js");
-var tasks = require("./tasks.js");
-var DelayQueue = require("./DelayQueue.js")
+var irc         = require("tmi.js"),
+    personal    = require("./personal.js"),
+    audience    = require("./audience.js"),
+    tasks       = require("./tasks.js"),
+    DelayQueue  = require("./DelayQueue.js");
 
 var clientSender,          // Used to send messages to Twitch channel
     clientListener,        // Used to listen to messages from Twitch channel
     lastMessageTime,       // The time of the last message sent by bot to channel, in milleseconds
     currentViewers,        // Array of viewers we have already welcomes
     newViewers,            // Array of viewers we have yet to welcome
-    coolDown = 3000,       // Cooldown ms, time to wait before processing any new sendToChat msgs
-    botSpeaker,              // Sends delayed queued messages to channel
+    coolDown,              // Cooldown ms, time to wait before processing any new sendToChat msgs
+    botSpeaker,            // Sends delayed queued messages to channel
     channelSpeakers,
     funnyMessages;
 
 init();
 
-// tasks.init(personal.CHANNELS());
-
 function init() {
 
-    // tasks.init();
-    // TODO: Add check for crash to see if restarting or user initiated launch
-
     // Initialize variables
+    coolDown = 3000;
     lastMessageTime = 0;
     newViewers = [];
     currentViewers = [];
@@ -56,17 +51,6 @@ function init() {
  * @param  {string} password       The password for the username used by the bot
  */
 function setupConnection(channels, username, password) {
-
-    // var callback = function(error, response, body){
-    //         if (error) {
-    //             console.log(error);
-    //         } else {
-    //             console.log(response.statusCode, body);
-    //         }
-    // };
-    //
-    // var viewers = api.getViewers(callback);
-
 
     // If we do not already have a clientSender and clientListener then create them
     if(!clientSender && !clientListener){
@@ -96,6 +80,10 @@ function setupConnection(channels, username, password) {
         })
 
         setupIncommingEventHandlers(clientListener)
+
+        // Start re-occuring tasks
+        tasks.init(personal.CHANNELS())
+
     }
 
 }
@@ -215,20 +203,4 @@ function onJoin(channel, username) {
         }
 
     }
-}
-
-function banUser(channel, user) {
-
-}
-
-function unBanUser(channel, user) {
-
-}
-
-function timeoutUser(channel, user, seconds) {
-
-}
-
-function parseMessage(message, emotes) {
-
 }
