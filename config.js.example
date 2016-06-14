@@ -1,0 +1,10 @@
+'use strict';
+
+var botSettings = {
+  channels: ["channels", "channels", "channels"],
+  server: "irc.twitch.tv",
+  username: "username",
+  password: "oauth" // can be obtained here: http://www.twitchapps.com/tmi
+}
+
+exports.botSettings = botSettings;
