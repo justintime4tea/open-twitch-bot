@@ -13,6 +13,7 @@
     "momentjs": "^1.1.7",
     "mysql": "^2.5.4",
     "request": "^2.72.0",
+    "tmi.js": "^1.1.1",
     "underscore": "~1.8.3"
   }
 }
